@@ -222,7 +222,9 @@ func TestRepository(t *testing.T) {
 	t.Run("subdir", func(t *testing.T) {
 		for _, filesystem := range filesystems {
 			t.Run(strings.ReplaceAll(filesystem.name, " ", "_"), func(t *testing.T) {
-				fsys := filesystem.factory(t, "kubernetes", "kubernetes")
+				owner := "kubernetes"
+				repo := "kubernetes"
+				fsys := filesystem.factory(t, owner, repo)
 
 				p := "."
 				switch true {
