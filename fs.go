@@ -160,9 +160,11 @@ func (f *fsys) Sub(dir string) (fs.FS, error) {
 	return f.clone(f.ref.join(dir)), nil
 }
 
-var _ fs.FS = (*fsys)(nil)
-var _ fs.SubFS = (*fsys)(nil)
-var _ fs.File = (*file)(nil)
+var (
+	_ fs.FS    = (*fsys)(nil)
+	_ fs.SubFS = (*fsys)(nil)
+	_ fs.File  = (*file)(nil)
+)
 
 type file struct {
 	name    string
@@ -268,10 +270,10 @@ func (fi *fileInfo) Size() int64 {
 
 func (fi *fileInfo) Mode() fs.FileMode {
 	if fi.isDir {
-		return fs.ModeDir | 0755
+		return fs.ModeDir | 0o755
 	}
 
-	return 0644
+	return 0o644
 }
 
 func (fi *fileInfo) ModTime() time.Time {

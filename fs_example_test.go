@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/google/go-github/v74/github"
+
 	githubfs "github.com/sagikazarmark/go-github-fs"
 )
 
