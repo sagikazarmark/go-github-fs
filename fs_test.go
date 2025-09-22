@@ -379,7 +379,21 @@ func TestDirectoryOperations(t *testing.T) {
 			t.Error("expected non-empty directory")
 		}
 
-		// Test partial reading
+		// Close and reopen the directory for partial reading test
+		file.Close()
+
+		file, err = fsys.Open(".")
+		if err != nil {
+			t.Fatalf("failed to reopen root directory: %v", err)
+		}
+		defer file.Close()
+
+		dirFile, ok = file.(fs.ReadDirFile)
+		if !ok {
+			t.Fatal("expected ReadDirFile interface")
+		}
+
+		// Test partial reading first
 		entries2, err := dirFile.ReadDir(3)
 		if err != nil {
 			t.Errorf("failed to read directory with limit: %v", err)
@@ -387,6 +401,18 @@ func TestDirectoryOperations(t *testing.T) {
 
 		if len(entries2) != 3 {
 			t.Errorf("expected 3 entries, got %d", len(entries2))
+		}
+
+		// Test reading remaining entries
+		remainingEntries, err := dirFile.ReadDir(-1)
+		if err != nil {
+			t.Errorf("failed to read remaining directory entries: %v", err)
+		}
+
+		totalEntries := len(entries2) + len(remainingEntries)
+		if totalEntries != len(entries) {
+			t.Errorf("total entries mismatch: partial(%d) + remaining(%d) = %d, expected %d",
+				len(entries2), len(remainingEntries), totalEntries, len(entries))
 		}
 	})
 
